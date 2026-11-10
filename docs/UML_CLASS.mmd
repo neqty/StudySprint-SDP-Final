@@ -1,0 +1,62 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ffffff', 'primaryTextColor': '#000000', 'primaryBorderColor': '#000000', 'lineColor': '#000000', 'secondaryColor': '#ffffff', 'tertiaryColor': '#ffffff', 'background': '#ffffff'}}}%%
+classDiagram
+    direction LR
+    class StudyPlan { +String name +String strategy +List~StudyTask~ tasks +List~StudySession~ sessions }
+    class StudyTask { <<abstract>> +getStudyTip() String }
+    class ReadingTask
+    class PracticeTask
+    class StudySession { +String taskId +int position }
+    class StudyPlanBuilder { +name(String) StudyPlanBuilder +strategy(String) StudyPlanBuilder +build() StudyPlan }
+    class TaskCreator { <<abstract>> +create(...) StudyTask +makeTask(...) StudyTask }
+    class ReadingTaskCreator
+    class PracticeTaskCreator
+    class ScheduleStrategy { <<interface>> +arrange(tasks) List~StudyTask~ }
+    class PriorityStrategy
+    class ShortestStrategy
+    class SessionText { <<interface>> +describe() String +totalMinutes() int }
+    class BasicSessionText
+    class BreakDecorator
+    class TipDecorator
+    class PlanObserver { <<interface>> +onPlanChanged(message) void }
+    class ActivityHistory
+    class TaskImporter { <<interface>> +importTasks(file) List~StudyTask~ }
+    class LegacyCsvAdapter
+    class OldCsvReader
+    class StudyReport { <<abstract>> +create(plan,scheduler) String }
+    class SummaryReport
+    class DetailedReport
+    class ReportFormat { <<interface>> +write(heading,lines) String }
+    class PlainTextFormat
+    class HtmlFormat
+    class StudyFacade
+    class ScheduleService
+    class PlanRepository
+    StudyPlan "1" o-- "*" StudyTask : tasks
+    StudyPlan "1" o-- "*" StudySession : sessions
+    StudyTask <|-- ReadingTask
+    StudyTask <|-- PracticeTask
+    StudyPlanBuilder ..> StudyPlan : build
+    TaskCreator <|-- ReadingTaskCreator
+    TaskCreator <|-- PracticeTaskCreator
+    TaskCreator ..> StudyTask : creates
+    ScheduleStrategy <|.. PriorityStrategy
+    ScheduleStrategy <|.. ShortestStrategy
+    ScheduleService --> ScheduleStrategy
+    SessionText <|.. BasicSessionText
+    SessionText <|.. BreakDecorator
+    SessionText <|.. TipDecorator
+    BreakDecorator o-- SessionText
+    TipDecorator o-- SessionText
+    PlanObserver <|.. ActivityHistory
+    StudyFacade o-- PlanObserver
+    TaskImporter <|.. LegacyCsvAdapter
+    LegacyCsvAdapter --> OldCsvReader
+    StudyReport <|-- SummaryReport
+    StudyReport <|-- DetailedReport
+    StudyReport o-- ReportFormat
+    ReportFormat <|.. PlainTextFormat
+    ReportFormat <|.. HtmlFormat
+    StudyFacade --> ScheduleService
+    StudyFacade --> PlanRepository
+    StudyFacade --> TaskImporter
+    StudyFacade --> StudyReport

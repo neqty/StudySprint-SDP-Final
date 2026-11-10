@@ -1,0 +1,78 @@
+digraph UML {
+  graph [rankdir=LR, bgcolor="white", pad=0.5, nodesep=0.24, ranksep=0.85, splines=polyline, fontname="DejaVu Sans", fontsize=16, label="Study Sprint - UML class relationships (8 design patterns)", labelloc=t];
+  node [shape=record, style="filled", fontname="DejaVu Sans", fontsize=11, fillcolor="#ffffff", color="#000000", margin="0.08,0.05"];
+  edge [arrowsize=0.55, color="#000000", fontname="DejaVu Sans", fontsize=9];
+  subgraph cluster_core {
+    label="DOMAIN & FACADE"; color="#000000"; style="solid";
+    StudyFacade [label="{StudyFacade | +addTask()\\l+generateSchedule()\\l+saveReport()\\l}",fillcolor="#ffffff"];
+    StudyPlan [label="{StudyPlan|name; strategy; tasks; sessions}"];
+    StudyTask [label="{StudyTask (abstract)|+getStudyTip()}"];
+    StudySession [label="{StudySession|taskId; position}"];
+    ScheduleService [label="{ScheduleService|+generate()\\l+decorate()\\l}"];
+    PlanRepository [label="{PlanRepository|+save()\\l+load()\\l}"];
+  }
+  subgraph cluster_creational {
+    label="CREATIONAL"; color="#000000"; style="solid";
+    StudyPlanBuilder [label="{StudyPlanBuilder|+name()\\l+strategy()\\l+build()\\l}", fillcolor="#ffffff"];
+    TaskCreator [label="{TaskCreator (abstract)|+create()\\l+makeTask()\\l}", fillcolor="#ffffff"];
+    ReadingTaskCreator [label="ReadingTaskCreator"];
+    PracticeTaskCreator [label="PracticeTaskCreator"];
+    ReadingTask [label="ReadingTask"];
+    PracticeTask [label="PracticeTask"];
+  }
+  subgraph cluster_behavior {
+    label="BEHAVIORAL"; color="#000000"; style="solid";
+    ScheduleStrategy [label="{ScheduleStrategy (interface)|+arrange()}", fillcolor="#ffffff"];
+    PriorityStrategy [label="PriorityStrategy"];
+    ShortestStrategy [label="ShortestStrategy"];
+    PlanObserver [label="{PlanObserver (interface)|+onPlanChanged()}",fillcolor="#ffffff"];
+    ActivityHistory [label="ActivityHistory"];
+  }
+  subgraph cluster_structural {
+    label="STRUCTURAL"; color="#000000"; style="solid";
+    SessionText [label="{SessionText (interface)|+describe()\\l+totalMinutes()\\l}",fillcolor="#ffffff"];
+    BasicSessionText [label="BasicSessionText"];
+    BreakDecorator [label="BreakDecorator"];
+    TipDecorator [label="TipDecorator"];
+    TaskImporter [label="{TaskImporter (interface)|+importTasks()}",fillcolor="#ffffff"];
+    LegacyCsvAdapter [label="LegacyCsvAdapter"];
+    OldCsvReader [label="OldCsvReader"];
+    StudyReport [label="{StudyReport (abstract)|+create()}",fillcolor="#ffffff"];
+    SummaryReport [label="SummaryReport"];
+    DetailedReport [label="DetailedReport"];
+    ReportFormat [label="{ReportFormat (interface)|+write()}",fillcolor="#ffffff"];
+    PlainTextFormat [label="PlainTextFormat"];
+    HtmlFormat [label="HtmlFormat"];
+  }
+  StudyFacade -> StudyPlan [label="manages"];
+  StudyFacade -> ScheduleService;
+  StudyFacade -> PlanRepository;
+  StudyFacade -> TaskImporter;
+  StudyFacade -> StudyReport;
+  StudyFacade -> PlanObserver [label="notifies", style=dashed];
+  StudyPlan -> StudyTask [label="1 to many"];
+  StudyPlan -> StudySession [label="1 to many"];
+  StudyPlanBuilder -> StudyPlan [style=dashed,label="builds"];
+  TaskCreator -> StudyTask [style=dashed,label="creates"];
+  ReadingTaskCreator -> TaskCreator [arrowhead=empty];
+  PracticeTaskCreator -> TaskCreator [arrowhead=empty];
+  ReadingTask -> StudyTask [arrowhead=empty];
+  PracticeTask -> StudyTask [arrowhead=empty];
+  ScheduleService -> ScheduleStrategy [label="uses"];
+  PriorityStrategy -> ScheduleStrategy [arrowhead=empty];
+  ShortestStrategy -> ScheduleStrategy [arrowhead=empty];
+  ActivityHistory -> PlanObserver [arrowhead=empty];
+  ScheduleService -> SessionText [label="wraps"];
+  BasicSessionText -> SessionText [arrowhead=empty];
+  BreakDecorator -> SessionText [arrowhead=empty];
+  TipDecorator -> SessionText [arrowhead=empty];
+  BreakDecorator -> SessionText [label="delegates",style=dashed];
+  TipDecorator -> SessionText [label="delegates",style=dashed];
+  LegacyCsvAdapter -> TaskImporter [arrowhead=empty];
+  LegacyCsvAdapter -> OldCsvReader;
+  SummaryReport -> StudyReport [arrowhead=empty];
+  DetailedReport -> StudyReport [arrowhead=empty];
+  StudyReport -> ReportFormat [label="has a"];
+  PlainTextFormat -> ReportFormat [arrowhead=empty];
+  HtmlFormat -> ReportFormat [arrowhead=empty];
+}

@@ -1,0 +1,28 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ffffff', 'primaryTextColor': '#000000', 'primaryBorderColor': '#000000', 'lineColor': '#000000', 'secondaryColor': '#ffffff', 'tertiaryColor': '#ffffff', 'background': '#ffffff'}}}%%
+sequenceDiagram
+    actor Student
+    participant UI as MainFrame
+    participant Facade as StudyFacade
+    participant Scheduler as ScheduleService
+    participant Strategy as ScheduleStrategy
+    participant Decorator as SessionText
+    participant Storage as PlanRepository
+    participant Observer as PlanObserver
+    Student->>UI: Choose Shortest first, click Generate
+    UI->>Facade: setOptions("Shortest first", true, true)
+    Facade->>Storage: save(plans)
+    Facade->>Observer: onPlanChanged("Changed schedule options")
+    UI->>Facade: generateSchedule()
+    Facade->>Scheduler: generate(currentPlan)
+    Scheduler->>Strategy: arrange(unfinishedTasks)
+    Strategy-->>Scheduler: sorted tasks
+    Scheduler-->>Facade: sessions created
+    Facade->>Storage: save(plans)
+    Facade->>Observer: onPlanChanged("Generated schedule")
+    Observer-->>UI: refresh screen
+    UI->>Facade: displaySchedule()
+    Facade->>Scheduler: display(plan)
+    Scheduler->>Decorator: describe(), totalMinutes()
+    Decorator-->>Scheduler: decorated session text
+    Scheduler-->>UI: ordered schedule + total
+    UI-->>Student: Show schedule

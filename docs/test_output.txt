@@ -1,0 +1,23 @@
+PASS 1 - sample data on first start
+PASS 2 - create a plan using Builder
+PASS 3 - create two task types with Factory Method
+PASS 4 - different task behaviours
+PASS 5 - priority Strategy ordering
+PASS 6 - shortest Strategy ordering
+PASS 7 - schedule minutes without Decorator
+PASS 8 - break and tip Decorators
+PASS 9 - Observer gets schedule event
+PASS 10 - mark done invalidates schedule
+PASS 11 - persistent save and reload
+PASS 12 - Bridge report types and formats
+PASS 13 - empty title rejected
+PASS 14 - duration below 5 rejected
+PASS 15 - priority above 5 rejected
+PASS 16 - empty plan name rejected
+PASS 17 - Adapter imports legacy CSV
+PASS 18 - invalid CSV rejected without partial import
+PASS 19 - edit a task
+PASS 20 - delete a task
+PASS 21 - export correct state to HTML
+PASS 22 - edits and deletes persist
+ALL 22 TESTS PASSED
